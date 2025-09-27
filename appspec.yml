@@ -1,0 +1,28 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: <TASK_DEFINITION>
+        LoadBalancerInfo:
+          ContainerName: "com-apne2-joker-app-container-dev"
+          ContainerPort: 8080
+        PlatformVersion: "LATEST"
+        NetworkConfiguration:
+          AwsVpcConfiguration:
+            Subnets:
+              - "subnet-xxxxxxxx"  # Private subnet 1
+              - "subnet-yyyyyyyy"  # Private subnet 2
+            SecurityGroups:
+              - "sg-xxxxxxxxx"  # App security group
+            AssignPublicIp: "DISABLED"
+
+Hooks:
+  # 배포 전 검증
+  - BeforeAllowTestTraffic: "arn:aws:lambda:ap-northeast-2:291759414399:function:CodeDeployHook_BeforeAllowTestTraffic"
+  # 테스트 트래픽 후 검증
+  - AfterAllowTestTraffic: "arn:aws:lambda:ap-northeast-2:291759414399:function:CodeDeployHook_AfterAllowTestTraffic"
+  # 실제 트래픽 전환 전
+  - BeforeAllowTraffic: "arn:aws:lambda:ap-northeast-2:291759414399:function:CodeDeployHook_BeforeAllowTraffic"
+  # 실제 트래픽 전환 후
+  - AfterAllowTraffic: "arn:aws:lambda:ap-northeast-2:291759414399:function:CodeDeployHook_AfterAllowTraffic"

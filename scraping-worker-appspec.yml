@@ -1,0 +1,18 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: <TASK_DEFINITION>
+        LoadBalancerInfo:
+          ContainerName: "com-apne2-scraping-worker-container-dev"
+          ContainerPort: 8080
+        PlatformVersion: "LATEST"
+        NetworkConfiguration:
+          AwsVpcConfiguration:
+            Subnets:
+              - "subnet-0b107f25c46759aea"  # com-vpc private subnet 1
+              - "subnet-0203415ae3e901deb"  # com-vpc private subnet 2
+            SecurityGroups:
+              - "<APP_SECURITY_GROUP>"  # Will be replaced by Terraform output
+            AssignPublicIp: "DISABLED"
